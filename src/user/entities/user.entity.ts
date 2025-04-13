@@ -1,37 +1,63 @@
 export class UserEntity {
   private id?: number;
   private name: string;
-  private email: string;
+  private username: string;
   private password: string;
+  private createdAt?: Date;
 
-  constructor(name: string, email: string, id?: number) {
-    this.id = id;
+  constructor(
+    name: string,
+    username: string,
+    password: string,
+    id?: number,
+    createdAt?: Date,
+  ) {
     this.name = name;
-    this.email = email;
+    this.username = username;
+    this.password = password;
+    this.id = id;
+    this.createdAt = createdAt;
   }
 
+  // Getters
   public getId(): number | undefined {
     return this.id;
   }
-  public setId(id: number): void {
-    this.id = id;
-  }
+
   public getName(): string {
     return this.name;
   }
-  public setName(name: string): void {
-    this.name = name;
+
+  public getUsername(): string {
+    return this.username;
   }
-  public getEmail(): string {
-    return this.email;
-  }
-  public setEmail(email: string): void {
-    this.email = email;
-  }
+
   public getPassword(): string {
     return this.password;
   }
-  public setPassword(password: string): void {
-    this.password = password;
+
+  public getCreatedAt(): Date | undefined {
+    return this.createdAt;
+  }
+
+  // Setters
+  public setId(value: number | undefined): void {
+    this.id = value;
+  }
+
+  public setName(value: string): void {
+    this.name = value;
+  }
+
+  public setUsername(value: string): void {
+    this.username = value;
+  }
+
+  public setPassword(value: string): void {
+    this.password = value;
+  }
+
+  public setCreatedAt(value: Date | undefined): void {
+    this.createdAt = value;
   }
 }
