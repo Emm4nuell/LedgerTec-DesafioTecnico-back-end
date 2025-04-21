@@ -34,10 +34,6 @@ export class AuthGuard implements CanActivate {
     if (!token) {
       throw new UnauthorizedException();
     }
-    console.log(
-      'CHAVE SECRETA :::: ',
-      this.configService.get<string>('JWT_SECRET'),
-    );
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const payload = await this.jwtService.verifyAsync(token, {

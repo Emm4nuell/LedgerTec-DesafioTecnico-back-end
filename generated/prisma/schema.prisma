@@ -15,3 +15,13 @@ model User {
   password  String
   createdAt DateTime @default(now())
 }
+
+model File {
+  id           Int      @id @default(autoincrement())
+  originalname String   @db.VarChar(255)
+  mimetype     String   @db.VarChar(100)
+  buffer       Bytes
+  size         Int
+  status       String   @db.VarChar(50)
+  createdAt    DateTime @default(now())
+}

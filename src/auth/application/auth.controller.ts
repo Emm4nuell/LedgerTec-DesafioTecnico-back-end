@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { AuthRequest } from './dto/auth.request';
 import { AuthService } from '../domain/service/auth.service';
 import { Public } from '../infrastructure/config/set.metadata';
+import { AuthRequest } from './dto/auth.request';
 
 @Controller('auth')
 export class AuthController {
@@ -10,6 +10,7 @@ export class AuthController {
   @Post()
   @Public()
   signin(@Body() request: AuthRequest) {
-    return this.authService.signIn(request.username, request.password);
+    const response = this.authService.signIn(request);
+    return response;
   }
 }

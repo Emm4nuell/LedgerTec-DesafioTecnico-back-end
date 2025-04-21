@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { AuthResponse } from '../../application/dto/auth.response';
 import { UserRepository } from 'src/user/infrastructure/repository/user.repository';
+import { AuthRequest } from 'src/auth/application/dto/auth.request';
 
 @Injectable()
 export class AuthService {
@@ -11,10 +12,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<AuthResponse> {
-    const user = await this.userRepository.findByUserName(username);
+  async signIn(request: AuthRequest): Promise<AuthResponse> {
+    const user = await this.userRepository.findByUserName(
+      request.getUsername(),
+    );
 
-    if (!(await compare(pass, user!.getPassword()))) {
+    if (!(await compare(request.getPassword(), user!.getPassword()))) {
       throw new UnauthorizedException();
     }
     const payload = { sub: user!.getId(), username: user!.getUsername() };

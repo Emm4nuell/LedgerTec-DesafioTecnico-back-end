@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/infrastructure/component/auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { ArchivematicaModule } from './archivematica/archivematica.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
     ConfigModule.forRoot({
       isGlobal: true, // necessário para que as variáveis do .env fiquem disponíveis em toda a aplicação
     }),
+    ArchivematicaModule,
   ],
   controllers: [],
   providers: [

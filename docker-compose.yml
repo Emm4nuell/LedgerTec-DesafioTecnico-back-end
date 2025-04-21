@@ -1,0 +1,118 @@
+version: '3'
+
+services:
+  archivematica-dashboard:
+    image: artefactual/archivematica-dashboard:latest
+    container_name: archivematica-dashboard
+    ports:
+      - '8000:8000'
+    environment:
+      - DJANGO_SETTINGS_MODULE=settings.common
+    volumes:
+      - archivematica-data:/var/archivematica/sharedDirectory
+    depends_on:
+      - archivematica-mcp-server
+      - archivematica-mcp-client
+      - archivematica-storage-service
+      - elasticsearch
+    networks:
+      - network-host
+
+  archivematica-mcp-server:
+    image: artefactual/archivematica-mcp-server:latest
+    container_name: archivematica-server
+    environment:
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=archivematica
+      - DB_USER=archivematica
+      - DB_PASSWORD=archivematicapassword
+    volumes:
+      - archivematica-data:/var/archivematica/sharedDirectory
+    networks:
+      - network-host
+
+  archivematica-mcp-client:
+    image: artefactual/archivematica-mcp-client:latest
+    container_name: archivematica-client
+    depends_on:
+      - archivematica-mcp-server
+      - gearman-server
+    environment:
+      - MCPCLIENT_GEARMAN_SERVER=gearman-server:4730
+      - CLAMAV_SERVER=clamavd
+      - CLAMAV_PORT=3310
+      - MCPCLIENT_ELASTICSEARCH_SERVER=elasticsearch:9200
+    volumes:
+      - archivematica-data:/var/archivematica/sharedDirectory
+    networks:
+      - network-host
+
+  archivematica-storage-service:
+    image: artefactual/archivematica-storage-service:latest
+    container_name: archivematica-storage
+    ports:
+      - '8001:8000'
+    volumes:
+      - archivematica-data:/var/archivematica/sharedDirectory
+    networks:
+      - network-host
+
+  gearman-server:
+    image: wajira/gearman-server
+    container_name: gearman-server
+    ports:
+      - '4730:4730'
+    networks:
+      - network-host
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: archivematica-elasticsearch
+    environment:
+      - cluster.name=am-cluster
+      - node.name=am-node
+      - network.host=0.0.0.0
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - network-host
+
+  clamavd:
+    image: artefactual/clamav:latest
+    container_name: archivematica-clamavd
+    environment:
+      - CLAMAV_MAX_FILE_SIZE=42
+      - CLAMAV_MAX_SCAN_SIZE=42
+      - CLAMAV_MAX_STREAM_LENGTH=100
+    volumes:
+      - archivematica-data:/var/archivematica/sharedDirectory:ro
+    networks:
+      - network-host
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: archivematica-nginx
+    volumes:
+      - ./etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./etc/nginx/conf.d/archivematica.conf:/etc/nginx/conf.d/archivematica.conf:ro
+      - ./etc/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - '62080:80'
+      - '62081:8000'
+    networks:
+      - network-host
+
+volumes:
+  archivematica-data:
+  elasticsearch_data:
+
+networks:
+  network-host:
+    external: true
