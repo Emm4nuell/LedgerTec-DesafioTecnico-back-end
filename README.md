@@ -80,5 +80,5 @@ Este projeto é parte de um **desafio técnico da empresa LedGerTec** para uma v
 ```
 
 
-### Para seguir com a instalação do Archivetamica no Docker, siga as instruções do README.db do link abaixo
+### Para seguir com a instalação do Archivetamica no Docker, siga as instruções do README.mb do link abaixo
 <p align="left">Link para instalação: <a href="https://github.com/artefactual/archivematica/tree/qa/1.x/hack" target="_blank">Archivematica</a></p>
